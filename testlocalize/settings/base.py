@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     "home",
     "product",
     "search",
+    "menu",
+    "svg",
     "wagtail_localize",
     "wagtail_localize.locales",
     'wagtail.contrib.routable_page',
@@ -49,7 +51,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'django_extensions',]
+    'django_extensions',
+    'generic_chooser',
+    ]
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
