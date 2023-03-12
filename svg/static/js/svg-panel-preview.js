@@ -1,13 +1,13 @@
 const renderSvgPanelPreview = (svg) => {
     if (svg.includes('<script')) {
         svgPreview.removeAttribute("class");
-        svgPreview.innerHTML='<p class="error-message">' + msgNoScript + '</p>';
+        svgPreview.innerHTML='<p class="error-message">' + msg.noScript + '</p>';
     } else if (svg.includes('<svg') && svg.includes('</svg>')) {
         svgPreview.innerHTML=svg;
         svg_tag = svgPreview.getElementsByTagName('svg')[0];
         if (!svg_tag.hasAttribute('viewBox')) {
             svgPreview.removeAttribute("class");
-            svgPreview.innerHTML='<p class="error-message">' + msgNoViewBox + '</p>';
+            svgPreview.innerHTML='<p class="error-message">' + msg.noViewBox + '</p>';
         } else {
             svgPreview.setAttribute("class", "svg-preview");
             svg_tag.removeAttribute('height');
@@ -15,11 +15,17 @@ const renderSvgPanelPreview = (svg) => {
         }
     } else {
         svgPreview.removeAttribute("class");
-        svgPreview.innerHTML='<p>' + msgPleaseEnter + '</p>';
+        svgPreview.innerHTML='<p>' + msg.pleaseEnter + '</p>';
     }
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
+    const fieldName = JSON.parse(document.getElementById("field_name").textContent);
+    const textfieldId = JSON.parse(document.getElementById("textfield_id").textContent);
+    const msg = JSON.parse(document.getElementById("msg").textContent);
+    svgField = document.getElementById(textfieldId);
+    svgFile = document.getElementById(fieldName + 'File');
+    svgPreview = document.getElementById(fieldName + '-svgPreview');
     renderSvgPanelPreview(svgField.value);
     svgField.addEventListener("input", () => {
         renderSvgPanelPreview(svgField.value);

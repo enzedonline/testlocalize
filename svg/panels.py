@@ -1,26 +1,29 @@
+from django.utils.html import json_script
 from django.utils.safestring import mark_safe
-from wagtail.admin.panels import FieldPanel
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.panels import FieldPanel
 
 
 class SVGFieldPanel(FieldPanel):
     class BoundPanel(FieldPanel.BoundPanel):       
 
-        class msg:
-            file_label = _("Read data from file")
-            no_script = _("SVG with embedded JavaScript not supported")
-            no_viewbox = _("SVG must have a valid viewBox attribute")
-            please_enter = _("Please enter a valid SVG element")
+        msg = {
+            'file_label': _("Read data from file"),
+            'preview': _("Preview"),
+            'noScript': _("SVG with embedded JavaScript not supported"),
+            'noViewbox': _("SVG must have a valid viewBox attribute"),
+            'pleaseEnter': _("Please enter a valid SVG element"),
+        }
 
         def render_html(self, parent_context = None):
             html = super().render_html(parent_context)
-            return mark_safe(html + self.file_to_text_with_preview())
+            return mark_safe(html + self.file_to_text_with_preview() + self.json_vars())
 
         def file_to_text_with_preview(self):
             return '''
                 <label for="svgFile"> 
                     <h4 class="w-panel__heading w-panel__heading--label svg-panel-label">
-                        ''' + self.msg.file_label + '''
+                        ''' + self.msg['file_label'] + '''
                     </h4> 
                 </label> 
                 <input 
@@ -33,14 +36,13 @@ class SVGFieldPanel(FieldPanel):
                     class="w-panel__heading w-panel__heading--label svg-panel-label" 
                     id="''' + self.field_name + '''-svgPreviewLabel"
                 >
-                    ''' + _("Preview") + '''
+                    ''' + self.msg['preview'] + '''
                 </h4> 
                 <div class="svg-preview" id="''' + self.field_name + '''-svgPreview"></div>
-                <script> 
-                    const svgFile = document.getElementById("''' + self.field_name + '''File"); 
-                    const svgField = document.getElementById("''' + self.id_for_label() + '''");
-                    const svgPreview = document.getElementById("''' + self.field_name + '''-svgPreview");
-                    const msgNoScript = "''' + self.msg.no_script + '''";
-                    const msgNoViewBox = "''' + self.msg.no_viewbox + '''";
-                    const msgPleaseEnter = "''' + self.msg.please_enter + '''";
-                </script>'''    
+                '''    
+
+        def json_vars(self):
+            return json_script(self.field_name, 'field_name') + \
+                   json_script(self.id_for_label(), 'textfield_id') + \
+                   json_script(self.msg, 'msg') 
+
