@@ -137,7 +137,6 @@ LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [
     ('en', "English"),
     ('fr', "French"),
     ('es', "Spanish"),
-    ('ca', 'Catalan')
 ]
 
 
