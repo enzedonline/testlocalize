@@ -12,7 +12,7 @@ def get_alternates(context):
     active_locale = Locale.get_active()
 
     for locale in Locale.objects.all():
-        if locale != active_locale:
+        if locale != active_locale and product:
             trans_page = page.get_translation(locale)
             subpage = trans_page.reverse_subpage('product_detail', kwargs={'sku': product.sku})
             alternates.append({'lang': locale.language_code, 'href': f'{trans_page.url}{subpage}'})

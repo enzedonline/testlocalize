@@ -1,11 +1,13 @@
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
-from wagtail.models import Page, TranslatableMixin, Locale
+from wagtail.fields import RichTextField
+from wagtail.models import Locale, Page, TranslatableMixin
 from wagtail.snippets.models import register_snippet
 from wagtail_localize.fields import TranslatableField
-from wagtail.admin.panels import FieldPanel
-from wagtail.fields import RichTextField
+
 
 @register_snippet
 class Product(TranslatableMixin, models.Model):
@@ -47,11 +49,14 @@ class ProductPage(RoutablePageMixin, Page):
 
     @path('<str:sku>/')
     def product_detail(self, request, sku):
-        product = Product.objects.filter(sku=sku, locale_id=Locale.get_active().id).first()
-        return self.render(
-            request,
-            context_overrides={
-                'product': product,
-            },
-            template="products/product_detail.html",
-        )
+        product = Product.objects.filter(sku=sku).first()
+        if product:
+            return self.render(
+                request,
+                context_overrides={
+                    'product': product.localized,
+                },
+                template="products/product_detail.html",
+            )
+        else:
+            return HttpResponseRedirect(self.url)
