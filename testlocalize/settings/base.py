@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "product",
     "search",
     "menu",
+    "language_switcher",
     "svg",
     "wagtail_localize",
     "wagtail_localize.locales",

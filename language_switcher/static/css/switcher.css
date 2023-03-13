@@ -1,0 +1,30 @@
+.switcher-flag {
+    height: 1.1rem !important;
+}
+
+.dropdown-menu-end {
+    right: 0.25rem;
+}
+
+.switcher-menu {
+    margin-bottom: 1em;
+}
+
+.switcher-item {
+    padding: 0.4rem 1.5rem;
+    text-decoration: none;
+    min-width: 6rem;
+}
+
+.switcher-lang {
+    padding-left: 0.7em;
+    vertical-align: -0.1rem;
+}
+
+.switcher-navbar {
+    max-width: 4rem;
+}
+
+.switcher-dropdown {
+    padding: 0;
+}

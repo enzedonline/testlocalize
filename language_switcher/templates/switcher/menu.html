@@ -1,0 +1,38 @@
+{% load static wagtailcore_tags switcher_tags %}
+<link rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/switcher.css' %}"/>
+{% include "switcher/flags.html" %}
+{% language_switcher self as switcher %}
+    <div class="collapse navbar-collapse order-2 dual-collapse2 menu-bar-collapse switcher-navbar"
+         id="language-switcher"
+         aria-controls="language-switcher">
+        <ul class="navbar-nav ms-auto pb-2 pb-lg-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle switcher-dropdown pe-0"
+                   href="#"
+                   title="{{ switcher.current.get_display_name }}"
+                   data-bs-toggle="dropdown"
+                   role="button"
+                   aria-haspopup="true"
+                   aria-expanded="false">
+                    <svg class="switcher-flag" viewBox="0 0 640 480">
+                        <use href="#{{ switcher.current.language_code }}"/>
+                    </svg>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end switcher-menu">
+                    {% for lang in switcher.alternatives %}
+                        <a class="dropdown-item switcher-item"
+                           title="{{ lang.name }}"
+                           href="{{ lang.url }}"
+                           rel="nofollow">
+                            <svg class="switcher-flag" viewBox="0 0 640 480">
+                                <use href='#{{ lang.language_code }}'/>
+                            </svg>
+                            <span class="switcher-lang">{{ lang.name }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </li>
+        </ul>
+    </div>
