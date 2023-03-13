@@ -1,24 +1,53 @@
 import re
 
 from bs4 import BeautifulSoup
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 
 from .panels import SVGFieldPanel
 
 
-class SVGImageForm(WagtailAdminModelForm):
+class SVGImage(models.Model):
+    label = models.CharField(max_length=255, verbose_name=_("label"), unique=True)
+    svg = models.TextField(
+        verbose_name="SVG",
+        help_text=_("Height and width attributes will be stripped on save."),
+    )
+
+    panels = [
+        FieldPanel("label"),
+        SVGFieldPanel("svg") # provides read svg file feature with preview and parsing
+    ]
+
+    def __str__(self):
+        return self.label
+
+    def image(self):
+        # used by SVGViewSet to display the image in the snippet list view
+        return mark_safe(
+            f'<div class="svg-viewset-cell">\
+                <div class="svg-viewset-item">\
+                    {self.svg}\
+                </div>\
+            </div>'
+        )
+    image.short_description = "Image"
+    
+    class Meta:
+        verbose_name = _("SVG Image")
+
     def clean(self) -> None:
-        # check valid svg has been entered
-        cleaned_data = super().clean()
-        code = cleaned_data.get("svg")
-        if code:
-            # strip any xmlns:svg definition as it corrupts BSoup output.
-            code = re.sub(r"xmlns:svg=\"\S+\"", "", code)
-            soup = BeautifulSoup(code, "xml")
+        # strip height/width attribute - should come from container or class
+        # strip any xmlns:svg definition as it corrupts BSoup output.
+        # strip preserveAspectRatio - default is True
+        # strip any embedded JavaScript (purely for security)
+        # check for valid svg element with viewBox attribute
+        if self.svg:
+            self.svg = re.sub(r"xmlns:svg=\"\S+\"", "", self.svg)
+            soup = BeautifulSoup(self.svg, "xml")
             svg = soup.find("svg")
             if svg:
                 del svg["height"]
@@ -31,42 +60,6 @@ class SVGImageForm(WagtailAdminModelForm):
                     self.add_error(
                         "svg", _("SVG element must include a valid viewBox attribute.")
                     )
-                cleaned_data["svg"] = str(svg.prettify())
+                self.svg = str(svg.prettify())
             else:
-                self.add_error(
-                    "svg", _("Please enter a valid SVG including the SVG element.")
-                )
-        return cleaned_data
-
-
-class SVGImage(models.Model):
-    base_form_class = SVGImageForm
-
-    label = models.CharField(max_length=255, verbose_name=_("label"), unique=True)
-    svg = models.TextField(
-        verbose_name="SVG",
-        help_text=_("Height and width attributes will be stripped on save."),
-    )
-
-    panels = [
-        FieldPanel("label"),
-        SVGFieldPanel("svg"),
-    ]
-
-    def __str__(self):
-        return self.label
-
-    def image(self):
-        return mark_safe(
-            f'<div class="svg-viewset-cell">\
-                <div class="svg-viewset-item">\
-                    {self.svg}\
-                </div>\
-            </div>'
-        )
-
-    image.short_description = "Image"
-    
-    class Meta:
-        verbose_name = _("SVG Image")
-
+                raise ValidationError(_("Please enter a valid SVG including the SVG element."))
