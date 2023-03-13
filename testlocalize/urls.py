@@ -7,11 +7,13 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from search import views as search_views
+from language_switcher.views import set_language_from_url
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
+    path('lang/<str:language_code>/', set_language_from_url, name='set_language_from_url'),
 ]
 
 
