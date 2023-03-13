@@ -3,12 +3,11 @@ from generic_chooser.views import ModelChooserMixin, ModelChooserViewSet
 from wagtail.admin.ui.tables import UpdatedAtColumn
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from .models import SVGFilterSet, SVGImage
+from .models import SVGImage
 
 
 class SVGViewSet(SnippetViewSet):
     list_display = ["image", "label", UpdatedAtColumn()]
-    filterset_class = SVGFilterSet
 
 class SVGImageChooserMixin(ModelChooserMixin):
     results_template = 'widgets/svg_chooser_results.html'

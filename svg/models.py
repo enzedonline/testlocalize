@@ -71,7 +71,3 @@ class SVGImage(models.Model):
     class Meta:
         verbose_name = _("SVG Image")
 
-class SVGFilterSet(WagtailFilterSet):
-    class Meta:
-        model = SVGImage
-        fields = ["label"]
