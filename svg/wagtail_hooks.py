@@ -1,16 +1,16 @@
 from wagtail import hooks
-from .views import SVGIconChooserViewSet
+from .views import SVGImageChooserViewSet
 from wagtail.snippets.models import register_snippet
-from .models import SVGIcon
+from .models import SVGImage
 from .views import SVGViewSet
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 
 @hooks.register('register_admin_viewset')
-def register_svg_icon_chooser_viewset():
-    return SVGIconChooserViewSet('svg_icon_chooser', url_prefix='svg-icon-chooser')
+def register_svg_image_chooser_viewset():
+    return SVGImageChooserViewSet('svg_image_chooser', url_prefix='svg-image-chooser')
 
-register_snippet(SVGIcon, viewset=SVGViewSet)
+register_snippet(SVGImage, viewset=SVGViewSet)
 
 @hooks.register('insert_editor_css')
 def svg_editor_css():

@@ -11,7 +11,7 @@ from wagtail.admin.panels import FieldPanel
 from .panels import SVGFieldPanel
 
 
-class SVGIconForm(WagtailAdminModelForm):
+class SVGImageForm(WagtailAdminModelForm):
     def clean(self) -> None:
         # check valid svg has been entered
         cleaned_data = super().clean()
@@ -25,7 +25,7 @@ class SVGIconForm(WagtailAdminModelForm):
                 del svg["height"]
                 del svg["width"]
                 del svg["preserveAspectRatio"]
-                # remove this next loop if you wany to allow <script> tags in <svg> icons
+                # remove this next loop if you wany to allow <script> tags in <svg> images
                 for script in svg.find_all("script"):
                     script.extract()
                 if not svg.has_attr("viewBox"):
@@ -40,8 +40,8 @@ class SVGIconForm(WagtailAdminModelForm):
         return cleaned_data
 
 
-class SVGIcon(models.Model):
-    base_form_class = SVGIconForm
+class SVGImage(models.Model):
+    base_form_class = SVGImageForm
 
     label = models.CharField(max_length=255, verbose_name=_("label"), unique=True)
     svg = models.TextField(
@@ -57,7 +57,7 @@ class SVGIcon(models.Model):
     def __str__(self):
         return self.label
 
-    def icon(self):
+    def image(self):
         return mark_safe(
             f'<div class="svg-viewset-cell">\
                 <div class="svg-viewset-item">\
@@ -66,12 +66,12 @@ class SVGIcon(models.Model):
             </div>'
         )
 
-    icon.short_description = "Icon"
+    image.short_description = "Image"
     
     class Meta:
-        verbose_name = _("SVG Icon")
+        verbose_name = _("SVG Image")
 
 class SVGFilterSet(WagtailFilterSet):
     class Meta:
-        model = SVGIcon
+        model = SVGImage
         fields = ["label"]

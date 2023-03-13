@@ -19,25 +19,30 @@ const renderSvgPanelPreview = (svg) => {
     }
 }
 
-window.addEventListener('DOMContentLoaded', (event) => {
-    const fieldName = JSON.parse(document.getElementById("field_name").textContent);
-    const textfieldId = JSON.parse(document.getElementById("textfield_id").textContent);
-    const msg = JSON.parse(document.getElementById("msg").textContent);
-    svgField = document.getElementById(textfieldId);
-    svgFile = document.getElementById(fieldName + 'File');
-    svgPreview = document.getElementById(fieldName + '-svgPreview');
-    renderSvgPanelPreview(svgField.value);
-    svgField.addEventListener("input", () => {
-        renderSvgPanelPreview(svgField.value);
+const initialiseSvgPanel = () => {
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const svgFieldNameElement = document.getElementById("svg_field_name")
+        if (svgFieldNameElement) {
+            const fieldName = JSON.parse(svgFieldNameElement.textContent);
+            const textfieldId = JSON.parse(document.getElementById("textfield_id").textContent);
+            const msg = JSON.parse(document.getElementById("msg").textContent);
+            svgField = document.getElementById(textfieldId);
+            svgFile = document.getElementById(fieldName + 'File');
+            svgPreview = document.getElementById(fieldName + '-svgPreview');
+            renderSvgPanelPreview(svgField.value);
+            svgField.addEventListener("input", () => {
+                renderSvgPanelPreview(svgField.value);
+            });
+            svgFile.addEventListener("change", (e) => {
+                e.preventDefault(); 
+                const input = svgFile.files[0]; 
+                const reader = new FileReader(); 
+                reader.onload = function (e) {
+                    svgField.value = e.target.result; 
+                    renderSvgPanelPreview(e.target.result); 
+                }; 
+                reader.readAsText(input); 
+            });
+        };
     });
-    svgFile.addEventListener("change", (e) => {
-        e.preventDefault(); 
-        const input = svgFile.files[0]; 
-        const reader = new FileReader(); 
-        reader.onload = function (e) {
-            svgField.value = e.target.result; 
-            renderSvgPanelPreview(e.target.result); 
-        }; 
-        reader.readAsText(input); 
-    }); 
-});
+};

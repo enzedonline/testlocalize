@@ -39,10 +39,11 @@ class SVGFieldPanel(FieldPanel):
                     ''' + self.msg['preview'] + '''
                 </h4> 
                 <div class="svg-preview" id="''' + self.field_name + '''-svgPreview"></div>
+                <script>initialiseSvgPanel()</script>
                 '''    
 
         def json_vars(self):
-            return json_script(self.field_name, 'field_name') + \
+            return json_script(self.field_name, 'svg_field_name') + \
                    json_script(self.id_for_label(), 'textfield_id') + \
                    json_script(self.msg, 'msg') 
 

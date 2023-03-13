@@ -16,8 +16,8 @@ from .blocks import MenuStreamBlock
 class Menu(TranslatableMixin, models.Model):
     title = models.CharField(max_length=255, verbose_name=_("Menu Title"))
     slug = models.SlugField()
-    icon = models.ForeignKey(
-        'svg.SVGIcon',
+    image = models.ForeignKey(
+        'svg.SVGImage',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -31,7 +31,7 @@ class Menu(TranslatableMixin, models.Model):
     panels = [
         FieldPanel('title'),
         FieldPanel('slug'),
-        FieldPanel('icon', widget=SVGChooser),
+        FieldPanel('image', widget=SVGChooser),
         FieldPanel('items')
     ]
 
@@ -40,7 +40,7 @@ class Menu(TranslatableMixin, models.Model):
 
     @property
     def logo(self):
-        return mark_safe(self.icon.svg) if self.icon else ''
+        return mark_safe(self.image.svg) if self.image else ''
     
     class Meta:
         verbose_name = _('Menu')
