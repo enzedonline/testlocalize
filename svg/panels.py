@@ -44,6 +44,6 @@ class SVGFieldPanel(FieldPanel):
 
         def json_vars(self):
             return json_script(self.field_name, 'svg_field_name') + \
-                   json_script(self.id_for_label(), 'textfield_id') + \
-                   json_script(self.msg, 'msg') 
+                   json_script(self.id_for_label(), 'svg_textfield_id') + \
+                   json_script(self.msg, 'svg_msg') 
 

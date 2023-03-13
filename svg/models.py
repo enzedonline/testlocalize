@@ -19,7 +19,7 @@ class SVGImage(models.Model):
 
     panels = [
         FieldPanel("label"),
-        SVGFieldPanel("svg") # provides read svg file feature with preview and parsing
+        SVGFieldPanel("svg"),  # provides read svg file feature with preview and parsing
     ]
 
     def __str__(self):
@@ -34,8 +34,9 @@ class SVGImage(models.Model):
                 </div>\
             </div>'
         )
+
     image.short_description = "Image"
-    
+
     class Meta:
         verbose_name = _("SVG Image")
 
@@ -56,10 +57,12 @@ class SVGImage(models.Model):
                 # remove this next loop if you wany to allow <script> tags in <svg> images
                 for script in svg.find_all("script"):
                     script.extract()
-                if not svg.has_attr("viewBox"):
-                    self.add_error(
-                        "svg", _("SVG element must include a valid viewBox attribute.")
+                if not (svg.has_attr("viewBox") or svg.has_attr("viewbox")):
+                    raise ValidationError(
+                        _("SVG element must include a valid viewBox attribute.")
                     )
                 self.svg = str(svg.prettify())
             else:
-                raise ValidationError(_("Please enter a valid SVG including the SVG element."))
+                raise ValidationError(
+                    _("Please enter a valid SVG including the SVG element.")
+                )
