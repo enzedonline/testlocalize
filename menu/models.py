@@ -51,9 +51,12 @@ class Menu(TranslatableMixin, models.Model):
         # Stop instances being created outside of default locale
         # ASSUMPTION: the field in the unique_together (template_set) is non-translatable
 
-        def_lang = Locale.get_default()
+        try:
+            def_lang = Locale.get_default()
+        except:
+            def_lang = Locale.objects.first()
         
-        if self.locale==Locale.get_default():
+        if self.locale==def_lang:
             # If in default locale, look for other sets with the template_set value (checking pre-save value)
             # Exclude other locales (will be translations of current locale)
             # Exclude self to cater for editing existing instance. Name change still checked against other instances.
@@ -67,8 +70,14 @@ class Menu(TranslatableMixin, models.Model):
     def delete(self):
         # If deleting instance in default locale, delete translations
         # Remove if clause if using multi-level translations (eg EN > ES > CA)
-        if self.locale==Locale.get_default():
+        try:
+            def_lang = Locale.get_default()
+        except:
+            def_lang = Locale.objects.first()
+        
+        if self.locale==def_lang:
             for trans in self.get_translations():
                 trans.delete()
         super().delete()
+
 
