@@ -1,14 +1,10 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags product_tags %} 
-
 {% block content %}
-
 <h1>{{ product }}</h1>
 <p>{{ product.description }}</p>
-
 {% get_alternates as alternates %}
 {% for alt in alternates %}
     <p>{{ alt.lang }} - {{ alt.href }}</p>
 {% endfor %}
-
 {% endblock content %}
