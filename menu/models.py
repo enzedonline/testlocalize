@@ -49,7 +49,7 @@ class Menu(TranslatableMixin, models.Model):
     def clean(self):
         # Check unique_together constraint
         # Stop instances being created outside of default locale
-        # ASSUMPTION: the field in the unique_together (template_set) is non-translatable
+        # ASSUMPTION: the field in the unique_together (slug) is non-translatable
 
         try:
             def_lang = Locale.get_default()
