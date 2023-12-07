@@ -1,13 +1,25 @@
-from django.db import models
+from wagtail.admin.panels import FieldPanel
+from wagtail.fields import StreamField, RichTextField
 from wagtail.models import Page
-import plotly.express as px
+from blocks.models import CSVTableBlock, ParsedRichTextBlock, ImportTextBlock
+from core.translations import TranslatablePageMixin
 
-class HomePage(Page):
+class HomePage(TranslatablePageMixin, Page):
     template = 'home/home_page.html'
+    parent_page_types = []
+    max_count = 1
+	
+    intro = RichTextField(blank=True, null=True)
+    content = StreamField(
+        [
+            ("cleaned_rich_text", ParsedRichTextBlock()), 
+            ("csv_table", CSVTableBlock()), 
+            ('import_text_block', ImportTextBlock()),
+        ], 
+        verbose_name="Page body", blank=True, use_json_field=True
+    )
 
-    # @property
-    # def plot(self):
-    #     data_canada = px.data.gapminder().query("country == 'Canada'")
-    #     fig = px.bar(data_canada, x='year', y='pop', title='Test Graph')
-    #     return fig.to_html(full_html=False)
-
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('content'),
+    ]

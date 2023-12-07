@@ -12,7 +12,7 @@ def register_svg_image_chooser_viewset():
 
 register_snippet(SVGImage, viewset=SVGViewSet)
 
-@hooks.register('insert_editor_css')
+@hooks.register('insert_global_admin_css')
 def svg_editor_css():
     chooser_css = static('css/svg-chooser.css')
     field_panel_css = static('css/svg-field-panel.css')

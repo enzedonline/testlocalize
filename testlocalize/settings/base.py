@@ -24,17 +24,21 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    "blocks",
+    "blog",	
+    "core",
     "home",
+    "menu",
     "product",
     "search",
-    "menu",
     "language_switcher",
     "svg",
     "wagtail_localize",
     "wagtail_localize.locales",
-    'wagtail.contrib.routable_page',
+    "wagtail.contrib.routable_page",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
+    "wagtail.contrib.styleguide",
     "wagtail.embeds",
     "wagtail.sites",
     "wagtail.users",
@@ -126,13 +130,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-gb"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "UTC"
 USE_I18N = True
 WAGTAIL_I18N_ENABLED = True
 USE_L10N = True
 USE_TZ = True
+DATETIME_FORMAT='j N Y p'
 
 LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [
     ('en', "English"),
@@ -151,7 +156,9 @@ STATICFILES_FINDERS = [
 ]
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
+    os.path.join(PROJECT_DIR, 'static'),
+    os.path.join(PROJECT_DIR, 'static/css'),
+    os.path.join(PROJECT_DIR, 'static/js'),
 ]
 
 # ManifestStaticFilesStorage is recommended in production, to prevent outdated
@@ -169,6 +176,7 @@ MEDIA_URL = "/media/"
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "testlocalize"
+WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
@@ -182,4 +190,33 @@ WAGTAILSEARCH_BACKENDS = {
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 WAGTAILADMIN_BASE_URL = "http://example.com"
 
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': [
+                'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic', 'ol', 'ul',
+                'link', 'hr', 'document-link', 
+                'underline', 'small', 'code', 'fa', 'checklist', 
+                'quoteblock', 'left-align', 'centre-align', 'right-align', 'code-block'
+                ]
+        }
+    },
+    'minimal': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['bold', 'italic', 'link']
+        }
+    },
+    'basic': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'h3', 'h4', 'bold', 'italic', 'link', 'ol', 'ul', 'hr']
+        }
+    },
+}
+
+# FIX NEEDED FOR DJANGO 3.2.x
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+RESTRICTED_PANEL_OVERRIDE_ROLES = ['Site Managers', 'Something']

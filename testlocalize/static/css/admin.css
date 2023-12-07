@@ -1,0 +1,8 @@
+.js-translation-editor .edit-link {
+    display: none;
+}
+form#page-reorder-form .help-block.help-info,
+form#page-reorder-form .help-block.help-warning
+{
+    display: none;
+}

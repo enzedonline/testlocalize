@@ -1,11 +1,11 @@
 from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
-
+from core.views import sitemap
 from search import views as search_views
 from language_switcher.views import set_language_from_url
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
+    re_path(r'^sitemap.xml$', sitemap, name='sitemap'),
     path('lang/<str:language_code>/', set_language_from_url, name='set_language_from_url'),
 ]
 
@@ -22,6 +23,7 @@ if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
     # Serve static and media files from development server
+    urlpatterns += static(r'/favicon.ico', document_root='static/favicon.ico')
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

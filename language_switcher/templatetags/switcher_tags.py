@@ -1,11 +1,22 @@
 from django import template
 from wagtail.models import Locale
+from wagtail.contrib.routable_page.models import RoutablePageMixin
 
 register = template.Library()
 
+def get_routable_subpage_url(page, context):
+    # if routable page, construct translated routable url
+    # the kwargs will be untranslated, you will need to handle the localization in the 
+    #   path definition in your routable page model
+    request = context.get('request', False)
+    if request:
+        resolver = page.get_resolver().resolve(request.path.replace(page.url, '/'))
+        return page.reverse_subpage(resolver.view_name, kwargs=resolver.kwargs)
+    else:
+        return ''
 
 @register.simple_tag(takes_context=True)
-def language_switcher(context, page):
+def language_switcher(context):
     # Build the language switcher
     # determine next_url for each locale if page has translation
     # /lang/<lang-code> redirects to menu.views.set_language_from_url:
@@ -16,36 +27,36 @@ def language_switcher(context, page):
     current_lang = Locale.get_active()
     switcher = {'alternatives': []}
 
-    for locale in Locale.objects.all():
-
-        if locale == current_lang: 
-            switcher['current'] = locale
-        else: # add the link to switch language 
-            next_url = ''
-            try:
-                # if page has live translation forward to that page, else forward to home page in new locale
-                trans_page = page.get_translation_or_none(locale=locale)
-                if trans_page and trans_page.live:
-                    try: 
-                        # if routable page, construct translated routable url
-                        # the kwargs will be untranslated, you will need to handle the localization in the 
-                        #   path definition in your routable page model
-                        resolver = page.get_resolver().resolve(context.request.path.replace(page.url, '/'))
-                        subpage = trans_page.reverse_subpage(resolver.view_name, kwargs=resolver.kwargs)
-                        next_url = f'?next={trans_page.url}{subpage}'
-                    except:
-                        next_url = f'?next={trans_page.url}'
-                else:
-                    next_url = f'?next=/{locale.language_code}/'
-            except AttributeError: # non-Wagtail page, let view determine best url to forward to
-                next_url = ''
-            switcher['alternatives'].append(
-                {
-                    'name': locale.get_display_name(), 
-                    'language_code': locale.language_code,
-                    'url': f'/lang/{locale.language_code}/{next_url}'
-                }
+    page = context.get('page', False)
+    if page:
+        for locale in Locale.objects.all():
+            if locale == current_lang: 
+                switcher['current'] = locale
+            else: # add the link to switch language 
+                next_url = page.translations.get(locale.language_code, '')
+                if next_url:
+                    if isinstance(page, RoutablePageMixin):
+                        next_url += context['request'].path.replace(page.url, '')
+                    next_url = f'?next={next_url}'
+                    
+                switcher['alternatives'].append(
+                    {
+                        'name': locale.get_display_name(), 
+                        'code': locale.language_code,
+                        'url': f'/lang/{locale.language_code}/{next_url}'
+                    }
+                )
+    else:
+        for locale in Locale.objects.all():            
+            if locale == current_lang: 
+                switcher['current'] = locale
+            else:
+                switcher['alternatives'].append(
+                    {
+                        'name': locale.get_display_name(), 
+                        'code': locale.language_code,
+                        'url': f'/lang/{locale.language_code}/'
+                    }
             )
-
     return switcher
 
