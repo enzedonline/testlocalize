@@ -34,41 +34,41 @@ class BlogIndex(TranslatablePageMixin, Page):
         FieldPanel("intro"),
     ]
 
-# class CarouselImages(Orderable):
-#     """Between 1 and 5 images for the blog page carousel."""
+class CarouselImages(Orderable):
+    """Between 1 and 5 images for the blog page carousel."""
 
-#     page = ParentalKey("blog.BlogPage", related_name="carousel_images")
-#     carousel_image = models.ForeignKey(
-#         "wagtailimages.Image",
-#         null=True,
-#         blank=True,
-#         on_delete=models.SET_NULL,
-#         related_name="+",
-#         verbose_name="Image",
-#     )
-#     caption = RichTextField(null=True, blank=True)
-#     some_date = models.DateTimeField(
-#         null=True, blank=True, help_text="Some helpful text"
-#     )
-#     some_text = models.CharField(max_length=255, default="some default value")
-#     some_text_area = models.TextField(default="some default value")
-#     some_choice_field = models.CharField(
-#         max_length=255,
-#         default="a",
-#         choices=[("a", "Choice A"), ("b", "Choice B"), ("c", "Choice C")],
-#     )
+    page = ParentalKey("blog.BlogPage", related_name="carousel_images")
+    carousel_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="Image",
+    )
+    caption = RichTextField(null=True, blank=True)
+    some_date = models.DateTimeField(
+        null=True, blank=True, help_text="Some helpful text"
+    )
+    some_text = models.CharField(max_length=255, default="some default value")
+    some_text_area = models.TextField(default="some default value")
+    some_choice_field = models.CharField(
+        max_length=255,
+        default="a",
+        choices=[("a", "Choice A"), ("b", "Choice B"), ("c", "Choice C")],
+    )
 
-#     panels = [
-#         FieldPanel("carousel_image"),
-#         FieldPanel("caption"),
-#         FieldPanel("some_date"),
-#         FieldPanel("some_text"),
-#         FieldPanel("some_text_area"),
-#         FieldPanel("some_choice_field"),
-#     ]
+    panels = [
+        FieldPanel("carousel_image"),
+        FieldPanel("caption"),
+        FieldPanel("some_date"),
+        FieldPanel("some_text"),
+        FieldPanel("some_text_area"),
+        FieldPanel("some_choice_field"),
+    ]
 
-#     class Meta(Orderable.Meta):
-#         verbose_name = "Carousel Image"
+    class Meta(Orderable.Meta):
+        verbose_name = "Carousel Image"
 
 
 class BlogPage(TranslatablePageMixin, Page):
@@ -151,10 +151,10 @@ class BlogPage(TranslatablePageMixin, Page):
         # ),
         # FieldPanel('owner'),
         # RegexPanel('some_slug'),
-        # MultiFieldPanel(
-        #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=0)],
-        #     heading="Carousel Images",
-        # ),
+        MultiFieldPanel(
+            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=0, label="Test")],
+            heading="Carousel Images",
+        ),
         # RestrictedFieldPanel('some_date'),
         # RestrictedFieldPanel('some_text'),
         # FieldPanel('some_text_area', widget=ImportTextAreaWidget(file_type_filter='.csv')),
