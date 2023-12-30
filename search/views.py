@@ -1,8 +1,8 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.template.response import TemplateResponse
-
-from wagtail.models import Page
-from wagtail.search.models import Query
+from wagtail.contrib.search_promotions.models import Query
+from wagtail.models import Locale, Page
+from wagtail.search.backends import get_search_backend
 
 
 def search(request):
@@ -11,10 +11,12 @@ def search(request):
 
     # Search
     if search_query:
-        search_results = Page.objects.live().search(search_query)
-        query = Query.get(search_query)
+        s = get_search_backend()
+        scope = Page.objects.live().defer_streamfields().filter(locale=Locale.get_active())
+        search_results = s.search(search_query, scope)
 
         # Record hit
+        query = Query.get(search_query)
         query.add_hit()
     else:
         search_results = Page.objects.none()
