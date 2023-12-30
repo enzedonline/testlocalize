@@ -1,6 +1,6 @@
 from django import template
-from wagtail.models import Locale
 from wagtail.contrib.routable_page.models import RoutablePageMixin
+from wagtail.models import Locale
 
 register = template.Library()
 
@@ -33,12 +33,13 @@ def language_switcher(context):
             if locale == current_lang: 
                 switcher['current'] = locale
             else: # add the link to switch language 
-                next_url = page.translations.get(locale.language_code, '')
+                next_url = next((item for item in page.alternates if item['lang_code'] == locale.language_code), None)
                 if next_url:
+                    next_url = next_url['location']
                     if isinstance(page, RoutablePageMixin):
                         next_url += context['request'].path.replace(page.url, '')
                     next_url = f'?next={next_url}'
-                    
+                
                 switcher['alternatives'].append(
                     {
                         'name': locale.get_display_name(), 
