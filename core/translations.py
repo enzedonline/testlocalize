@@ -64,13 +64,12 @@ class TranslatablePageMixin(ExtendedTranslatableMixin):
         Convert translations urls to absolute urls instead of relative urls
         Add x-default value.
         """
-        default_lang_code = Locale.get_default().language_code
         site_root = self.get_site().root_url
         alt = [
             {"lang_code": key, "location": f"{site_root}{value}"}
             for key, value in self.translations.items()
         ]
-        x_default = self.translations.get(default_lang_code)
+        x_default = self.translations.get(Locale.get_default().language_code)
         if not x_default:
             # doesn't exist in default locale, use the first locale in the translations
             x_default = list(self.translations.items())[0][1]
