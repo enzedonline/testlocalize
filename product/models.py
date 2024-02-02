@@ -57,6 +57,10 @@ class Product(
 
     def __str__(self):
         return f"{self.sku} - {self.title}"
+    
+    @property
+    def preview(self):
+        return self.image or self.icon
 
     def get_preview_template(self, request, mode_name):
         return "products/product_detail.html"
