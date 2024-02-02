@@ -14,9 +14,9 @@ from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                            ExternalLinkEmbedBlock, FlexCardBlock,
                            ImportTextBlock, LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (DepartmentSelectorPanel, ImportTextAreaPanel,
+from core.panels import (ImportTextAreaPanel,
                          M2MChooserPanel, RegexPanel, RestrictedFieldPanel,
-                         RestrictedInlinePanel, UtilityPanel, LocalizedChooser)
+                         RestrictedInlinePanel, UtilityPanel)
 from core.translations import TranslatablePageMixin
 from core.utils import count_words, get_streamfield_text
 from core.widgets.import_textarea_widget import ImportTextAreaWidget
@@ -164,7 +164,7 @@ class BlogPage(TranslatablePageMixin, Page):
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
         FieldPanel("some_product"),
-        LocalizedChooser('some_page'),
+        FieldPanel('some_page'),
         FieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
