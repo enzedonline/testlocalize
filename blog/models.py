@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import Group
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -13,15 +14,16 @@ from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                            ExternalLinkEmbedBlock, FlexCardBlock,
                            ImportTextBlock, LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
+from core.panels import (DepartmentSelectorPanel, ImportTextAreaPanel,
+                         M2MChooserPanel, RegexPanel, RestrictedFieldPanel,
+                         RestrictedInlinePanel, UtilityPanel, LocalizedChooser)
 from core.translations import TranslatablePageMixin
-from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
-                         RestrictedFieldPanel, RestrictedInlinePanel,
-                         UtilityPanel)
 from core.utils import count_words, get_streamfield_text
 from core.widgets.import_textarea_widget import ImportTextAreaWidget
 from product.blocks import ProductChooserBlock
 
 from .categories import BlogCategory
+
 
 class BlogIndex(TranslatablePageMixin, Page):
     parent_page_types = ['home.HomePage']
@@ -74,38 +76,37 @@ class CarouselImages(Orderable):
 class BlogPage(TranslatablePageMixin, Page):
     parent_page_types = ['blog.BlogIndex']
     subpage_types = []
-
-    # wordcount = models.IntegerField(
-    #     null=True, blank=True, verbose_name="Word Count", default=0
-    # )
-    # some_date = models.DateTimeField(
-    #     null=True, blank=True, help_text="Some helpful text"
-    # )
-    # some_text = models.CharField(max_length=255, default="some default value")
-    # some_text_area = models.TextField(null=True, blank=True, verbose_name="Air Quality")
-    # some_rich_text = RichTextField(null=True, blank=True, editor="basic")
-    # some_slug = models.SlugField(null=True, blank=True)
-    # some_choice_field = models.CharField(
-    #     max_length=255,
-    #     default="a",
-    #     choices=[("a", "Choice A"), ("b", "Choice B"), ("c", "Choice C")],
-    # )
-    # some_image = models.ForeignKey(
-    #     "wagtailimages.Image",
-    #     null=True,
-    #     blank=True,
-    #     related_name="+",
-    #     on_delete=models.SET_NULL,
-    #     verbose_name="Some Image",
-    # )
-    # some_document = models.ForeignKey(
-    #     "wagtaildocs.Document",
-    #     null=True,
-    #     blank=True,
-    #     related_name="+",
-    #     on_delete=models.SET_NULL,
-    #     verbose_name="Some Document",
-    # )
+    wordcount = models.IntegerField(
+        null=True, blank=True, verbose_name="Word Count", default=0
+    )
+    some_date = models.DateTimeField(
+        null=True, blank=True, help_text="Some helpful text"
+    )
+    some_text = models.CharField(max_length=255, default="some default value")
+    some_text_area = models.TextField(null=True, blank=True, verbose_name="Air Quality")
+    some_rich_text = RichTextField(null=True, blank=True, editor="basic")
+    some_slug = models.SlugField(null=True, blank=True)
+    some_choice_field = models.CharField(
+        max_length=255,
+        default="a",
+        choices=[("a", "Choice A"), ("b", "Choice B"), ("c", "Choice C")],
+    )
+    some_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        verbose_name="Some Image",
+    )
+    some_document = models.ForeignKey(
+        "wagtaildocs.Document",
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        verbose_name="Some Document",
+    )
     some_product = models.ForeignKey(
         "product.Product",
         null=True,
@@ -114,14 +115,14 @@ class BlogPage(TranslatablePageMixin, Page):
         on_delete=models.SET_NULL,
         verbose_name="Product",
     )
-    # some_page = models.ForeignKey(
-    #     "wagtailcore.Page",
-    #     null=True,
-    #     blank=True,
-    #     related_name="+",
-    #     on_delete=models.SET_NULL,
-    #     verbose_name="Some Page",
-    # )
+    some_page = models.ForeignKey(
+        "wagtailcore.Page",
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        verbose_name="Some Page",
+    )
     content = StreamField(
         [
             ("rich_text", RichTextBlock()),
@@ -151,10 +152,10 @@ class BlogPage(TranslatablePageMixin, Page):
         # ),
         # FieldPanel('owner'),
         # RegexPanel('some_slug'),
-        MultiFieldPanel(
-            [RestrictedInlinePanel("carousel_images", max_num=5, min_num=0, label="Test")],
-            heading="Carousel Images",
-        ),
+        # MultiFieldPanel(
+        #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=0, label="Test")],
+        #     heading="Carousel Images",
+        # ),
         # RestrictedFieldPanel('some_date'),
         # RestrictedFieldPanel('some_text'),
         # FieldPanel('some_text_area', widget=ImportTextAreaWidget(file_type_filter='.csv')),
@@ -163,7 +164,7 @@ class BlogPage(TranslatablePageMixin, Page):
         # RestrictedFieldPanel('some_image'),
         # RestrictedFieldPanel('some_document'),
         FieldPanel("some_product"),
-        # RestrictedFieldPanel('some_page'),
+        LocalizedChooser('some_page'),
         FieldPanel("content"),
         # UtilityPanel('<span class="editor-reminder">Some important notice to display</span>'),
         # UtilityPanel(
