@@ -35,7 +35,14 @@ class BaseProductChooseView(BaseSnippetChooseView):
                 link_attrs={"data-chooser-modal-choice": True},
             ),
         ]
+    
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
 
+    def get_object_list(self):
+        objects = super().get_object_list()
+        return objects.filter(title__icontains='')  
+    
 class ProductChooseView(ChooseView, BaseProductChooseView):
     pass
 
