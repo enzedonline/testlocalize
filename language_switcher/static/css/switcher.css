@@ -1,12 +1,6 @@
-.switcher-flag {
-    height: 1.1rem !important;
-}
-
-.switcher-item {
-    padding-left: 1.5rem;
-}
-
-.switcher-lang {
-    padding-left: 0.7em;
-    vertical-align: -0.1em;
+li.nav-item.switcher-menu a.nav-link>svg.switcher-flag {
+    border-width: 1px;
+    border-color: var(--bs-border-color);
+    border-style: solid;
+    width: auto !important;
 }

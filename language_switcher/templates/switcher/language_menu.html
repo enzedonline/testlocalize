@@ -6,28 +6,30 @@
 {% endblock extra_css %}
 {% static "icons/flags.svg" as flags %}
 {% language_switcher as switcher %}
-<li class="nav-item dropdown my-auto ps-2">
-    <a class="nav-link dropdown-toggle menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}"
+<li class="nav-item dropdown switcher-menu">
+    <a class="nav-link dropdown-toggle"
        title="{{ switcher.current.get_display_name }}"
        data-bs-toggle="dropdown"
        role="button"
        aria-haspopup="true"
        aria-expanded="false">
-        <svg viewBox="0 0 640 480" width="25px">
+        <svg class="switcher-flag" viewBox="0 0 640 480">
             <use href="{{ flags }}#{{ switcher.current.language_code }}" />
         </svg>
     </a>
-    <div class="dropdown-menu dropdown-menu-end switcher-menu menustream menustream-{{ menu.breakpoint }} menustream-{{ menu.slug }}">
+    <ul class="dropdown-menu dropdown-menu-end">
         {% for lang in switcher.alternatives %}
-            <a class="dropdown-item switcher-item"
-               title="{{ lang.name }}"
-               href="{{ lang.url }}"
-               rel="nofollow">
-                <svg class="switcher-flag" viewBox="0 0 640 480">
-                    <use href="{{ flags }}#{{ lang.code }}" />
-                </svg>
-                <span class="switcher-lang">{{ lang.name }}</span>
-            </a>
+            <li class="dropdown-item">
+                <a class="nav-link"
+                   href="{{ lang.url }}"
+                   title="{{ lang.name }}"
+                   rel="nofollow">
+                    <svg class="switcher-flag" viewBox="0 0 640 480">
+                        <use href="{{ flags }}#{{ lang.code }}" />
+                    </svg>
+                    <div>{{ lang.name }}</div>
+                </a>
+            </li>
         {% endfor %}
-    </div>
+    </ul>
 </li>
