@@ -1,14 +1,20 @@
+
 import base64
+import fnmatch
 import importlib
 import io
+import math
+import os
 import re
 from collections import OrderedDict
 from html import unescape
 from html.parser import HTMLParser
 
 from bs4 import BeautifulSoup
+from crequest.middleware import CrequestMiddleware
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
+from lxml import etree
 from PIL.ExifTags import GPSTAGS, TAGS
 from wagtail.blocks import ListBlock
 from wagtail.blocks.stream_block import StreamValue
@@ -288,4 +294,115 @@ def list_streamfield_blocks(streamfield):
         return list
     
     return list_child_blocks(streamfield.stream_block.child_blocks)
+
+def sf(number, significant_figures):
+    if number == 0:
+        return 0
+    else:
+        return round(number, significant_figures - int(math.floor(math.log10(abs(number)))) - 1)
+
+def get_custom_icons():
+    # Specify the root folder
+    root_folder = 'core/templates'
+    icons_folder = 'icons'
+
+    # Specify the file extension you're looking for
+    file_extension = '*.svg'
+
+    # Initialize an empty list to store relative file paths
+    icons = []
+
+    # Construct the path to the 'enzedonline/templates/icons' folder
+    icons_path = os.path.join(root_folder, icons_folder)
+
+    # Walk through the directory and find .svg files in the 'enzedonline/templates/icons' folder
+    for foldername, subfolders, filenames in os.walk(icons_path):
+        for filename in fnmatch.filter(filenames, file_extension):
+            file_path = os.path.join(foldername, filename)
+            relative_path = os.path.relpath(file_path, root_folder)
+            icons.append(relative_path)
+
+    return icons
+
+def strip_svg_markup(svg_markup):
+    """Strip <script> tags, height and width attributes from svg markup"""
+    root = etree.fromstring(svg_markup.encode('utf-8'))
+    for element in root.findall(".//{http://www.w3.org/2000/svg}script"):
+        element.getparent().remove(element)
+    for element in root.iter():
+        element.attrib.pop('height', None)
+        element.attrib.pop('width', None)
+    return etree.tostring(root, encoding='unicode', method='xml', xml_declaration=False)
     
+class FakeRequest:
+    """
+    FakeRequest takes the place of the django HTTPRequest object in various testing scenarios where
+    a real one doesn't exist, but the code under test expects one to be there.
+
+    Wagtail 2.9 now determines the current Site by looking at the hostname and port in the request object,
+    which means it calls get_host() on our faked out requests. Thus, we need to emulate it.
+    """
+
+    def __init__(self, site=None, user=None, **kwargs):
+        self.user = user
+        # Include empty GET and POST attrs, so code which expects request.GET or request.POST to exist won't crash.
+        self.GET = self.POST = {}
+        # Callers can override GET and POST, or override/add any other attribute using kwargs.
+        self.__dict__.update(kwargs)
+        self._wagtail_site = site
+
+    def get_host(self):
+        if not self._wagtail_site:
+            return 'fakehost'
+        return self._wagtail_site.hostname
+
+    def get_port(self):
+        # It should be safe to pretend all test traffic is on port 443.
+        # HTTPRequest.get_port() explicitly returns a string, so we do, too.
+        return '443'
+
+
+def set_fake_current_request(site=None, user=None, request=None, **kwargs):
+    """
+    Sets the current request to either a specified request object or a FakeRequest object built from the given Site
+    and/or User. Any additional keyword args are added as attributes on the FakeRequest.
+    """
+    # If the caller didn't provide a request object, create a FakeRequest.
+    if request is None:
+        request = FakeRequest(site, user, **kwargs)
+    # Set the created (or provided) request as the "current request".
+    CrequestMiddleware.set_request(request)
+    return request
+
+
+class FakeCurrentRequest():
+    """
+    Implements set_fake_current_request() as a context manager. Use like this:
+    with FakeCurrentRequest(some_site, some_user):
+        // .. do stuff
+    OR
+    with FakeCurrentRequest(request=some_request):
+        // .. do stuff
+
+    When the context manager exits, the current request will be automatically reverted to its previous state.
+    """
+    NO_CURRENT_REQUEST = 'no_current_request'
+
+    def __init__(self, site=None, user=None, request=None, **kwargs):
+        self.site = site
+        self.user = user
+        self.request = request
+        self.kwargs = kwargs
+
+    def __enter__(self):
+        # Store a copy of the original current request, so we can restore it when the context manager exits.
+        self.old_request = CrequestMiddleware.get_request(default=self.NO_CURRENT_REQUEST)
+        return set_fake_current_request(self.site, self.user, self.request, **self.kwargs)
+
+    def __exit__(self, *args):
+        if self.old_request == self.NO_CURRENT_REQUEST:
+            # If there wasn't a current request when we entered the contact manager, remove the current request.
+            CrequestMiddleware.del_request()
+        else:
+            # Otherwise, set the current request back to whatever it was when we entered.
+            CrequestMiddleware.set_request(self.old_request)
