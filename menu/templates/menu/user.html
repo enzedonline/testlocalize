@@ -1,0 +1,37 @@
+{% load wagtailcore_tags menu_tags %}
+{# User menu - Add social logins after loaded menu #}
+<li class="nav-item dropdown user-menu">
+    <a class="nav-link dropdown-toggle"
+       title="{{ self.title }}"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false"
+       aria-label="{{ self.title }}">
+        {% if request.user.is_authenticated %}
+            {% if self.logged_in_icon %}
+                {% menu_icon self.logged_in_icon %}
+            {% endif %}
+            <div>{{ self.logged_in_title }}</div>
+        {% else %}
+            {% if self.logged_in_icon %}
+                {% menu_icon self.logged_in_icon %}
+            {% endif %}
+            <div>{{ self.logged_out_title }}</div>
+        {% endif %}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
+        {% if request.user.is_authenticated and self.logged_in_text %}
+            <li class="dropdown-item nav-label">
+                <span class="nav-link user-message" onclick="event.stopPropagation();">{% render_user_info self.logged_in_text %}</span>
+            </li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+        {% endif %}
+        {% for item in self.items %}
+            {% if item.value|show_on_menu:request %}
+                {% include_block item with link_type="dropdown-item" %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</li>

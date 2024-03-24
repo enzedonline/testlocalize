@@ -1,22 +1,28 @@
 {% load wagtailcore_tags wagtailimages_tags menu_tags %}
+{% get_autofill_pages as links %}
 <li class="{% if link_type == 'nav-item' %}nav-item dropdown{% else %}dropdown-item submenu dropinline{% endif %}">
-    <a class="nav-link dropdown-toggle" 
+    <a role="button"
        title="{{ self.title }}"
-       role="button"
+       class="nav-link dropdown-toggle"
        data-bs-toggle="dropdown"
        aria-expanded="false"
        {% if link_type == 'dropdown-item' %}onclick="event.stopPropagation();"{% endif %}>
         {% if self.options.icon %}
             {% menu_icon self.options.icon %}
         {% endif %}
-        {% if self.title %}
-            <div>{{ self.title }}</div>
-        {% endif %}
+        <div>{{ self.title }}</div>
     </a>
     <ul class="dropdown-menu dropdown-menu-end{% if self.sticky %} position-absolute{% endif %}">
-        {% for item in self.items %}
-            {% if item.value|show_on_menu:request %}
-                {% include_block item with link_type="dropdown-item" %}
+        {% for link in links %}
+            <li class="dropdown-item {{ link.active }}">
+                <a class="nav-link {{ link.active }}"
+                   href="{{ link.url }}"
+                   title="{{ link.title }}">
+                    <div>{{ link.title }}</div>
+                </a>
+            </li>
+            {% if forloop.first and self.include_parent_page %}
+                {% include "menu/submenu-divider.html" %}
             {% endif %}
         {% endfor %}
     </ul>
