@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'django_extensions',
     'generic_chooser',
-    ]
+    "crequest",
+]
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -70,6 +71,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "crequest.middleware.CrequestMiddleware",
 ]
 
 ROOT_URLCONF = "testlocalize.urls"
@@ -143,7 +145,7 @@ LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [
     ('en', "English"),
     ('fr', "Français"),
     ('es', "Español"),
-    ('de', "Deutsch")
+    ('de', "Deutsch"),
 ]
 
 
@@ -181,9 +183,20 @@ WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
 WAGTAILSEARCH_BACKENDS = {
-    "default": {
-        "BACKEND": "wagtail.search.backends.database",
-    }
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database',
+        'SEARCH_CONFIG': 'english',
+    },
+    'es': {
+        'BACKEND': 'wagtail.search.backends.database',
+        'SEARCH_CONFIG': 'spanish',
+        'INDEX' : 'es'
+    },
+    'fr': {
+        'BACKEND': 'wagtail.search.backends.database',
+        'SEARCH_CONFIG': 'french',
+        'INDEX' : 'en'
+    },
 }
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
