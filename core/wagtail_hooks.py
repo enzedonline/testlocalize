@@ -10,7 +10,7 @@ from .draftail_extensions import (DRAFTAIL_ICONS, register_block_feature,
                                   register_inline_styling)
 from .sitemap import SiteMap
 from .thumbnails import ThumbnailOperation
-from .utils import has_role
+from .utils import has_role, get_custom_icons
 
 
 @hooks.register('register_rich_text_features')
@@ -217,3 +217,8 @@ def register_image_operations():
     return [
         ('thumbnail', ThumbnailOperation)
     ]
+
+@hooks.register("register_icons")
+def register_icons(icons):
+    return icons + get_custom_icons()
+    
