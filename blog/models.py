@@ -150,7 +150,7 @@ class BlogPage(TranslatablePageMixin, Page):
         #     '<b>Word Count:</b> {{wordcount}}', {'wordcount': 'wordcount'},
         #     style = 'margin-bottom: 2em;display: block;background-color: antiquewhite;padding: 1em;border-radius: 1em;'
         # ),
-        # FieldPanel('owner'),
+        FieldPanel('owner'),
         # RegexPanel('some_slug'),
         # MultiFieldPanel(
         #     [RestrictedInlinePanel("carousel_images", max_num=5, min_num=0, label="Test")],
