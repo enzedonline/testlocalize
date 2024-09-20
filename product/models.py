@@ -108,7 +108,7 @@ class ProductPage(TranslatablePageMixin, RoutablePageMixin, Page):
                 # redirect request to product if found and if live else send request to product list instead
                 translated = products.first().get_translation_or_none(active_locale)
                 return HttpResponseRedirect(self.url + (translated.sku if (translated and translated.live) else ''))
-            # no live products matching that sku in any locale, redirect to product list instead
+            # no live products matching that sku in this locale, redirect to product list instead
             return HttpResponseRedirect(self.url)
 
     @property
