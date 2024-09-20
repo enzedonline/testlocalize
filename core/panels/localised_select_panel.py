@@ -16,7 +16,7 @@ class LocalizedSelectPanel(FieldPanel):
     Usage:
     widget_class - optional, override field widget type
                  - should be CheckboxSelectMultiple, RadioSelect, Select or SelectMultiple
-    typed_choice_field - set to True with Select widget forces drop down list
+    typed_choice_field - set to True with Select widget forces drop down list with selector icon
     """
 
     def __init__(
@@ -69,5 +69,4 @@ class LocalizedSelectPanel(FieldPanel):
             self.form.fields[self.field_name].queryset = self.form.fields[
                 self.field_name
             ].queryset.filter(locale_id=self.instance.locale_id)
-            choices = ModelChoiceIterator(self.form.fields[self.field_name])
-            return choices
+            return ModelChoiceIterator(self.form.fields[self.field_name])
