@@ -19,7 +19,7 @@ def get_routable_subpage_url(page, context):
 def language_switcher(context):
     # Build the language switcher
     # determine next_url for each locale if page has translation
-    # /lang/<lang-code> redirects to menu.views.set_language_from_url:
+    # /lang/<lang-code> redirects to .views.set_language_from_url:
     #     path('lang/<str:language_code>/', set_language_from_url),
     # if no ?next= param passed to the view, it will attempt to determine best url from HTTP_REFERER
     # this will happen if non-Wagtail page is served, or if Wagtail page has no translation
