@@ -1,19 +1,14 @@
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 from wagtail.fields import RichTextField
-from wagtail.models import (
-    DraftStateMixin,
-    Locale,
-    LockableMixin,
-    Page,
-    PreviewableMixin,
-    RevisionMixin,
-    TranslatableMixin,
-    WorkflowMixin,
-)
+from wagtail.models import (DraftStateMixin, Locale, LockableMixin, Orderable,
+                            Page, PreviewableMixin, RevisionMixin,
+                            TranslatableMixin, WorkflowMixin)
 from wagtail.snippets.models import register_snippet
 from wagtail_localize.fields import TranslatableField
 
@@ -21,6 +16,70 @@ from core.translations import TranslatablePageMixin
 
 
 @register_snippet
+class StoreDepartment(ClusterableModel):
+    code = models.CharField(
+        max_length=10,
+        unique=True,
+        verbose_name=_("Department Code"),
+    )
+    name = models.CharField(
+        max_length=50,
+        verbose_name=_("Name"),
+    )
+
+    panels = [
+        FieldPanel("code"),
+        FieldPanel("name"),
+        MultiFieldPanel(
+            [
+                InlinePanel("department_subcategories"),
+            ],
+            heading=_("Department Subcategories"),
+        ),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Store Department")
+        verbose_name_plural = _("Store Departments")
+
+
+class DepartmentSubcategory(Orderable):
+    department = ParentalKey(
+        "StoreDepartment",
+        related_name="department_subcategories"
+    )
+    code = models.CharField(
+        max_length=10,
+        unique=True,
+        verbose_name=_("Subcategory Code"),
+    )
+    name = models.CharField(
+        max_length=50,
+        verbose_name=_("Name"),
+    )
+
+    panels = [
+        FieldPanel("code"),
+        FieldPanel("name"),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Department Subcategory")
+        verbose_name_plural = _("Department Subcategories")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['department', 'name'],
+                name='unique_department_departmentsubcategory_name'
+            ),
+        ]
+
+
 class Product(
     TranslatableMixin,
     PreviewableMixin,
@@ -33,6 +92,14 @@ class Product(
     sku = models.CharField(max_length=10, verbose_name=_("SKU"))
     title = models.CharField(max_length=100, verbose_name=_("Product Title"))
     description = RichTextField(verbose_name=_("Product Description"))
+    dept_subcategory = models.ForeignKey(
+        "product.DepartmentSubcategory",
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        verbose_name=_("Department Subcategory"),
+    )
     image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -64,6 +131,9 @@ class Product(
 
     def get_preview_template(self, request, mode_name):
         return "products/product_detail.html"
+    
+    def get_department_subcategory(self):
+        return f'{self.dept_subcategory.department} - {self.dept_subcategory}'
 
 class ProductPage(TranslatablePageMixin, RoutablePageMixin, Page):
     parent_page_types = ["home.HomePage"]
