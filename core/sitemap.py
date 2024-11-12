@@ -150,7 +150,7 @@ class SiteMap:
         for child_page in (
             home.get_descendants(inclusive=True).defer_streamfields().live().public().specific()
         ):
-            urlset.append(child_page.get_sitemap_urls[0])
+            urlset.append(child_page.get_sitemap_urls())
         try:
             urlset.remove([])
         except:
