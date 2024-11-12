@@ -6,8 +6,10 @@ from wagtail.admin.widgets.slug import SlugInput
 from wagtail.snippets.models import register_snippet
 from wagtail.models import TranslatableMixin
 
+from core.translations import ExtendedTranslatableMixin
+
 @register_snippet
-class BlogCategory(TranslatableMixin, models.Model):
+class BlogCategory(ExtendedTranslatableMixin, TranslatableMixin, models.Model):
     title = models.CharField(max_length=100, verbose_name=_("Category Name"))
     slug = models.SlugField(
         max_length=100,
