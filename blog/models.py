@@ -9,14 +9,15 @@ from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
 from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
+from wagtail.search import index
 
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                            ExternalLinkEmbedBlock, FlexCardBlock,
                            ImportTextBlock, LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (ImportTextAreaPanel,
-                         M2MChooserPanel, RegexPanel, RestrictedFieldPanel,
-                         RestrictedInlinePanel, UtilityPanel)
+from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
+                         RestrictedFieldPanel, RestrictedInlinePanel,
+                         UtilityPanel)
 from core.translations import TranslatablePageMixin
 from core.utils import count_words, get_streamfield_text
 from core.widgets.import_textarea_widget import ImportTextAreaWidget
@@ -236,7 +237,13 @@ class BlogPage(TranslatablePageMixin, Page):
         M2MChooserPanel("categories"),
     ]
 
+    search_fields = Page.search_fields + [
+        index.SearchField('some_product'),
+        index.FilterField('some_product')
+    ]
+
     base_form_class = RestrictedPanelsAdminPageForm
+    list_filter = ['title', 'some_product']
 
     class Meta:
         verbose_name = "Blog Page"
