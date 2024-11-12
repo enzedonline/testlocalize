@@ -45,7 +45,7 @@ def find_next_url(request, requested_locale):
             prev_page = Page.objects.get(url_path=prev_path).specific
 
             # Find translation of referring page
-            # Default to home page if nothing matches
+            # Walk up page tree to find closest translation if nothing matches
             next_page = prev_page.translations.get(requested_locale.language_code)
             next_url = next_page or find_closest_translation(
                 prev_page, requested_locale
