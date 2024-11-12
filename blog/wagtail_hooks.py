@@ -5,7 +5,7 @@ from wagtail import hooks
 # from blog.models import BlogPage
 
 from .views import user_chooser_viewset
-
+from .viewsets import blog_page_listing_viewset
 
 # @hooks.register("after_edit_page")
 # @hooks.register("after_create_page")
@@ -24,3 +24,7 @@ from .views import user_chooser_viewset
 @hooks.register('register_admin_viewset')
 def register_user_chooser_viewset():
     return user_chooser_viewset
+
+@hooks.register("register_admin_viewset")
+def register_blog_page_listing_viewset():
+    return blog_page_listing_viewset
