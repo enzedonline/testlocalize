@@ -1,13 +1,26 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.ui.tables import TitleColumn
+from wagtail.admin.ui.tables import Column, TitleColumn, UpdatedAtColumn
+from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import (BaseSnippetChooseView,
                                             ChooseResultsView, ChooseView)
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from core.viewsets.columns import ImageColumn
 from core.widgets import SnippetPreviewChooserViewSet
 
 from .models import Product
 
+
+class ProductViewSet(SnippetViewSet):
+    model = Product
+    list_display = ["title", ImageColumn("image"), "get_department_subcategory", "sku", UpdatedAtColumn()]
+    list_filter = {"title": ["icontains"], "sku": ["icontains"], "dept_subcategory": ["exact"]}
+    list_per_page = 50
+    ordering = ["dept_subcategory", "title"]
+    
+setattr(Product.get_department_subcategory, 'admin_order_field', "dept_subcategory")
+setattr(Product.get_department_subcategory, 'short_description', Product.dept_subcategory.field.verbose_name)
+register_snippet(ProductViewSet)
 
 class BaseProductChooseView(BaseSnippetChooseView):
     @property
