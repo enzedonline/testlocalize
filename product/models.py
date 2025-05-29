@@ -123,7 +123,7 @@ class Product(
     ]
 
     def __str__(self):
-        return f"{self.sku} - {self.title}"
+        return f"{self.sku} - {self.title} ({self.locale})"
     
     @property
     def preview(self):
