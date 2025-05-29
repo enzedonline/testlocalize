@@ -13,7 +13,7 @@ from .models import Product
 
 class ProductViewSet(SnippetViewSet):
     model = Product
-    list_display = ["title", ImageColumn("image"), "get_department_subcategory", "sku", UpdatedAtColumn()]
+    list_display = ["title", "locale", ImageColumn("image"), "get_department_subcategory", "sku", UpdatedAtColumn()]
     list_filter = {"title": ["icontains"], "sku": ["icontains"], "dept_subcategory": ["exact"]}
     list_per_page = 50
     ordering = ["dept_subcategory", "title"]
