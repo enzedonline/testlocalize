@@ -103,9 +103,7 @@ class M2MChooserPanel(FieldPanel):
                     pass
 
         def get_choice_list(self, iterator):
-            choice_list = []
-            for value, label in iterator:
-                choice_list.append({'value': value.value, 'label': label})
+            choice_list = [{'value': value.value, 'label': label} for value, label in iterator]
             return choice_list
 
         def get_context_data(self, parent_context=None):
