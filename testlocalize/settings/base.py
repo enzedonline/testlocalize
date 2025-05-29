@@ -187,16 +187,16 @@ WAGTAILSEARCH_BACKENDS = {
         'BACKEND': 'wagtail.search.backends.database',
         'SEARCH_CONFIG': 'english',
     },
-    'es': {
-        'BACKEND': 'wagtail.search.backends.database',
-        'SEARCH_CONFIG': 'spanish',
-        'INDEX' : 'es'
-    },
-    'fr': {
-        'BACKEND': 'wagtail.search.backends.database',
-        'SEARCH_CONFIG': 'french',
-        'INDEX' : 'en'
-    },
+    # 'fr': {
+    #     'BACKEND': 'wagtail.search.backends.database',
+    #     'SEARCH_CONFIG': 'french',
+    #     'INDEX' : 'en'
+    # },
+    # 'es': {
+    #     'BACKEND': 'wagtail.search.backends.database',
+    #     'SEARCH_CONFIG': 'spanish',
+    #     'INDEX' : 'es'
+    # },
 }
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
