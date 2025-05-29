@@ -1,28 +1,25 @@
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.models import ModelChoiceIterator
-from django.forms.widgets import (
-    CheckboxSelectMultiple,
-    RadioSelect,
-    Select,
-    SelectMultiple,
-)
+from django.forms.widgets import (CheckboxSelectMultiple, RadioSelect, Select,
+                                  SelectMultiple)
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 
 
-class LocalizedSelectPanel(FieldPanel):
+class LocalizedChoicePanel(FieldPanel):
     """
     Customised FieldPanel to filter choices based on locale of page/model being created/edited
     Usage:
     widget_class - optional, override field widget type
                  - should be CheckboxSelectMultiple, RadioSelect, Select or SelectMultiple
-    typed_choice_field - set to True with Select widget forces drop down list with selector icon
+    typed_choice_field - set to True with Select widget forces drop down list with ▼ selector icon
     """
 
     def __init__(
         self, field_name, widget_class=None, typed_choice_field=False, *args, **kwargs
     ):
-        if not widget_class in [
+        if settings.DEBUG and not widget_class in [
             None,
             CheckboxSelectMultiple,
             RadioSelect,
