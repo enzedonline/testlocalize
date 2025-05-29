@@ -86,10 +86,10 @@ class SiteMap:
             if thread:
                 threading.Thread(
                     target=self.add_url,
-                    kwargs=page.get_sitemap_urls()[0],
+                    kwargs=page.get_sitemap_urls(),
                 ).start()
             else:
-                self.add_url(**page.get_sitemap_urls()[0])
+                self.add_url(**page.get_sitemap_urls())
         else:
             self.generate_sitemap_from_page(page, thread)
 
