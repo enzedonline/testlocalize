@@ -9,14 +9,16 @@ from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
 from wagtail.blocks import RawHTMLBlock, RichTextBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
+from wagtail.search import index
+from wagtail.snippets.blocks import SnippetChooserBlock
 
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                            ExternalLinkEmbedBlock, FlexCardBlock,
                            ImportTextBlock, LinkBlock)
 from core.forms import RestrictedPanelsAdminPageForm
-from core.panels import (ImportTextAreaPanel,
-                         M2MChooserPanel, RegexPanel, RestrictedFieldPanel,
-                         RestrictedInlinePanel, UtilityPanel)
+from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
+                         RestrictedFieldPanel, RestrictedInlinePanel, LocalizedChoicePanel,
+                         UtilityPanel)
 from core.translations import TranslatablePageMixin
 from core.utils import count_words, get_streamfield_text
 from core.widgets.import_textarea_widget import ImportTextAreaWidget
@@ -134,6 +136,7 @@ class BlogPage(TranslatablePageMixin, Page):
             ("external_link", ExternalLinkEmbedBlock()),
             ("link", LinkBlock()),
             ("flex_card", FlexCardBlock()),
+            ("menu", SnippetChooserBlock('menu.Menu'))
         ],
         verbose_name="Page Content",
         blank=True,
@@ -233,10 +236,17 @@ class BlogPage(TranslatablePageMixin, Page):
         #         'file_reader': {'module': 'core.utils', 'method': 'import_text_field_button', 'field': 'some_text_area'}
         #     }
         # ),
-        M2MChooserPanel("categories"),
+        LocalizedChoicePanel("categories"),
+        # M2MChooserPanel("categories"),
+    ]
+
+    search_fields = Page.search_fields + [
+        index.SearchField('some_product'),
+        index.FilterField('some_product')
     ]
 
     base_form_class = RestrictedPanelsAdminPageForm
+    list_filter = ['title', 'some_product']
 
     class Meta:
         verbose_name = "Blog Page"
