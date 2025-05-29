@@ -247,6 +247,7 @@ class BlogPage(TranslatablePageMixin, Page):
 
     base_form_class = RestrictedPanelsAdminPageForm
     list_filter = ['title', 'some_product']
+    list_filter = ['title', 'some_product']
 
     class Meta:
         verbose_name = "Blog Page"
