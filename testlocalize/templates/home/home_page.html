@@ -1,6 +1,9 @@
 {% extends "base.html" %}
-{% load static %}
+{% load wagtailcore_tags %}
 {% block content %}
     <p>{{ self.title }}</p>
     Alternates: {{ self.alternates }}
+    {% for block in page.content %}
+        {% include_block block %}
+    {% endfor %}
 {% endblock content %}
