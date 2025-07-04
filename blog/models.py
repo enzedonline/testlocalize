@@ -14,7 +14,7 @@ from wagtail.snippets.blocks import SnippetChooserBlock
 
 from blocks.models import (CollapsibleCardBlock, CSVTableBlock,
                            ExternalLinkEmbedBlock, FlexCardBlock,
-                           ImportTextBlock, LinkBlock)
+                           ImportTextBlock, LinkBlock, TranslatableTextListBlock)
 from core.forms import RestrictedPanelsAdminPageForm
 from core.panels import (ImportTextAreaPanel, M2MChooserPanel, RegexPanel,
                          RestrictedFieldPanel, RestrictedInlinePanel, LocalizedChoicePanel,
@@ -136,7 +136,8 @@ class BlogPage(TranslatablePageMixin, Page):
             ("external_link", ExternalLinkEmbedBlock()),
             ("link", LinkBlock()),
             ("flex_card", FlexCardBlock()),
-            ("menu", SnippetChooserBlock('menu.Menu'))
+            ("menu", SnippetChooserBlock('menu.Menu')),
+            ("translatable_text", TranslatableTextListBlock())
         ],
         verbose_name="Page Content",
         blank=True,

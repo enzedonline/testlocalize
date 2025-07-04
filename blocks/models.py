@@ -6,3 +6,4 @@ from .collapsible_card import CollapsibleCardBlock
 from .external_link import ExternalLinkEmbedBlock
 from .links import LinkBlock
 from .flex_card import FlexCardBlock
+from .translatable_text import TranslatableTextListBlock
