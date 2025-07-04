@@ -266,6 +266,7 @@ class MenuStreamBlock(StreamBlock):
         block_counts = {
             'search_form': {'min_num': 0, 'max_num': 1},
             'user_menu': {'min_num': 0, 'max_num': 1},
+            'language_switcher_menu': {'min_num': 0, 'max_num': 1},
         }
 
 
