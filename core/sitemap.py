@@ -61,7 +61,7 @@ class SiteMap:
         if alternates:
             for alternate in alternates:
                 alternate_tag = self.soup.new_tag(
-                    "xhtml:link", hreflang=alternate["hreflang"], href=alternate["href"]
+                    "xhtml:link", hreflang=alternate["lang_code"], href=alternate["location"]
                 )
                 url_entry.append(alternate_tag)
 
@@ -82,16 +82,18 @@ class SiteMap:
         Add or ammend page entry using page get_sitemap_urls
         thread=True passes execution back immediately without waiting for completion
         """
-        if os.path.exists(self.sitemap_path):
-            if thread:
-                threading.Thread(
-                    target=self.add_url,
-                    kwargs=page.get_sitemap_urls(),
-                ).start()
-            else:
-                self.add_url(**page.get_sitemap_urls())
-        else:
-            self.generate_sitemap_from_page(page, thread)
+        self.add_url(**page.get_sitemap_urls())
+
+        # if os.path.exists(self.sitemap_path):
+        #     if thread:
+        #         threading.Thread(
+        #             target=self.add_url,
+        #             kwargs=page.get_sitemap_urls(),
+        #         ).start()
+        #     else:
+        #         self.add_url(**page.get_sitemap_urls())
+        # else:
+        #     self.generate_sitemap_from_page(page, thread)
 
     def remove_url(self, location):
         """
