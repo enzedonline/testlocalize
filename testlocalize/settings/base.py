@@ -142,10 +142,10 @@ USE_TZ = True
 DATETIME_FORMAT='j N Y p'
 
 LANGUAGES = WAGTAIL_CONTENT_LANGUAGES = [
-    ('en', "English"),
-    ('fr', "Français"),
-    ('es', "Español"),
     ('de', "Deutsch"),
+    ('en', "English"),
+    ('es', "Español"),
+    ('fr', "Français"),
 ]
 
 
