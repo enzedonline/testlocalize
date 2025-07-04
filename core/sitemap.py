@@ -82,18 +82,16 @@ class SiteMap:
         Add or ammend page entry using page get_sitemap_urls
         thread=True passes execution back immediately without waiting for completion
         """
-        self.add_url(**page.get_sitemap_urls())
-
-        # if os.path.exists(self.sitemap_path):
-        #     if thread:
-        #         threading.Thread(
-        #             target=self.add_url,
-        #             kwargs=page.get_sitemap_urls(),
-        #         ).start()
-        #     else:
-        #         self.add_url(**page.get_sitemap_urls())
-        # else:
-        #     self.generate_sitemap_from_page(page, thread)
+        if os.path.exists(self.sitemap_path):
+            if thread:
+                threading.Thread(
+                    target=self.add_url,
+                    kwargs=page.get_sitemap_urls(),
+                ).start()
+            else:
+                self.add_url(**page.get_sitemap_urls())
+        else:
+            self.generate_sitemap_from_page(page, thread)
 
     def remove_url(self, location):
         """
